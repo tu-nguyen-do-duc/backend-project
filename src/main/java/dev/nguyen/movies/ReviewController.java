@@ -1,5 +1,6 @@
 package dev.nguyen.movies;
 
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,20 @@ public class ReviewController {
     public String addReviewFromForm(@ModelAttribute Review review, @RequestParam String imdbId, Authentication authentication) {
         String username = authentication.getName();
         reviewService.createReview(review.getBody(), imdbId, username);
+        return "redirect:/movies/" + imdbId;
+    }
+
+    @PostMapping("/edit")
+    public String editReviewFromForm(@RequestParam String reviewId, @RequestParam String body, Authentication authentication, @RequestParam String imdbId) {
+        String username = authentication.getName();
+        reviewService.updateReview(new ObjectId(reviewId), body, username);
+        return "redirect:/movies/" + imdbId;
+    }
+
+    @PostMapping("/delete")
+    public String deleteReviewFromForm(@RequestParam String reviewId, Authentication authentication, @RequestParam String imdbId) {
+        String username = authentication.getName();
+        reviewService.deleteReview(new ObjectId(reviewId), username);
         return "redirect:/movies/" + imdbId;
     }
 }
